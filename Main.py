@@ -7,13 +7,14 @@ def main():
         dietary_pref = input("Enter your dietary preference (e.g., Vegetarian, Seafood, etc.): ").strip()
         available_ingredients = input("Enter available ingredients (comma-spearated): ").lower().split(',')
         available_ingredients = [i.strip() for i in available_ingredients]
-        
+
         meals_per_day = int(input("Enter number of meals per day: "))
         days = int(input("Enter number of days to plan for: "))
+        store_choice = input("Enter the store: ")
         budget = input("Enter budget in dollars (or leave blank): ").strip()
         budget = float(budget) if budget else None
 
-        meal_plan, grocery_list, total_cost = meal_planner(dietary_pref, available_ingredients, meals_per_day, days, budget)
+        meal_plan, grocery_list, total_cost = meal_planner(dietary_pref, available_ingredients, meals_per_day, days, store_choice, budget)
 
         save_to_file("meal_plan.txt", meal_plan)
         save_to_file("grocery_list.txt", grocery_list)
