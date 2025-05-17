@@ -6,6 +6,8 @@ def main():
     try:
         dietary_pref = input("Enter your dietary preference (e.g., Vegetarian, Seafood, etc.): ").strip()
         available_ingredients = input("Enter available ingredients (comma-spearated): ").lower().split(',')
+        available_ingredients = [i.strip() for i in available_ingredients]
+        
         meals_per_day = int(input("Enter number of meals per day: "))
         days = int(input("Enter number of days to plan for: "))
         budget = input("Enter budget in dollars (or leave blank): ").strip()
