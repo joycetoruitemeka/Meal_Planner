@@ -23,7 +23,7 @@ def meal_planner(category, available_ingredients, meals_per_day, days, budget=No
 
             for i in range(1, 21):
                 ing = meal_detail.get(f"strIngredient{i}")
-                if ing and ing.strip() and ing.lower() not in avalaible_ingredients:
+                if ing and ing.strip() and ing.lower() not in available_ingredients:
                     grocery_list.add(ing.strip())
         plan[f"Day {day}"] = meal_names
     
