@@ -1,10 +1,20 @@
+"""
+main.py
+
+Command-line entry point for the Meal-Planner application.
+Handles all user interaction.
+"""
+
 from Planner import meal_planner
 from Storage import save_to_file
 
 #Making the main function
 def main():
+    """
+    Runs an interactive session
+    """
     try:
-        dietary_pref = input("Enter your dietary preference (e.g., Vegetarian, Seafood, etc.): ").strip()
+        dietary_pref = input("Enter your dietary preference (e.g., Vegetarian, Seafood, Vegan.): ").strip()
         available_ingredients = input("Enter available ingredients (comma-spearated): ").lower().split(',')
         available_ingredients = [i.strip() for i in available_ingredients]
 

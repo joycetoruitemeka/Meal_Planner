@@ -1,4 +1,14 @@
-from Meals_API import search_meals, search_meals_cat, meal_details
+"""
+Planner.py
+
+Generates a weekly meal plan, builds a grocery list,
+and estimates cost with a two-step model:
+
+1. Base price by food type  (spice / veg / protein / other)
+2. Multiplier by store tier (Walmart, Trader Joe’s, Whole Foods, Aldi, Costco)
+"""
+
+from Meals_API import search_meals_cat, meal_details
 import random
 
 #Rough base price per food item (USD)
@@ -24,8 +34,27 @@ Spice_Keywords = {"salt", "pepper", "garlic", "spice", "powder", "herb"}
 Protein_Keywords = {"chicken", "beef", "pork", "tofu", "salmon", "fish", "egg", "turkey", "shrimp"}
 Veg_Keywords = {"lettuce", "tomato", "onion", "broccoli", "carrot", "pepper", "spinach", "zucchini", "potato"}
 
+#Modifiers
+Modifiers = {"chopped", "minced", "fresh", "raw", "sliced", "diced", "cubed", "whole", "ground", "grated"}
+
+#Normalize the ingredients
+def normalize_ingredients(name: str) -> str:
+    """
+    Lower-case a raw ingredient string and remove descriptive modifiers.
+
+    Examples:
+     normalize_ingredients("Chopped Tomatoes")
+    'tomatoes'
+    """
+
+    words = name.lower().split()
+    return " ".join(word for word in words if word not in Modifiers)
+
 #Classifying the ingredients
 def classify_ingredients(item:str) -> str:
+    """
+    Categorizing items based on simple keywords
+    """
 
     name = item.lower()
     if any(k in name for k in Spice_Keywords):
@@ -39,9 +68,22 @@ def classify_ingredients(item:str) -> str:
 
 #Estimate cost
 def estimate_cost(missing_items:list, store:str) -> float:
+    """
+    Estimates grocery cost for missing_items at store.
+
+    Parameters:
+    missing_items : list[str]
+        Unique, normalised ingredient names.
+    store : str
+        Store name; affects multiplier.
+
+    Returns:
+    float
+        Dollar estimate rounded to 2 decimal places.
+    """
     
     store_key = store.lower().strip()
-    multiplier = Store_Mult.get(store_key,) #Default mid-range
+    multiplier = Store_Mult.get(store_key, 1.5) #Default mid-range
 
     subtotal = 0.0
     for item in missing_items:
@@ -52,6 +94,31 @@ def estimate_cost(missing_items:list, store:str) -> float:
 
 #function to generate a grocery list
 def meal_planner(category, available_ingredients, meals_per_day, days, store_choice="walmart", budget=None):
+    """
+    Creates a multi-day meal plan and grocery list.
+
+    Parameters:
+    category : str
+        Dietary category for recipe search (e.g., "Vegetarian").
+    available_ingredients : list[str]
+        Items the user already has; will not appear in grocery list.
+    meals_per_day : int
+        How many different meals to plan per day.
+    days : int
+        Number of days to plan.
+    store_choice : str, default 'walmart'
+        Store used for price multiplier.
+    budget : float | None
+        If supplied, prints a warning when estimate exceeds budget.
+
+    Returns:
+    tuple(dict, list[str], float)
+        ( meal_plan, grocery_list, total_cost )
+        meal_plan : {'Day 1': [mealA, mealB], ...}
+        grocery_list : sorted, unique list of ingredients to buy
+        total_cost : estimated cost in USD
+    """
+
     meals = search_meals_cat(category)
     if not meals:
         raise Exception("No meals found for this category.")
@@ -75,7 +142,7 @@ def meal_planner(category, available_ingredients, meals_per_day, days, store_cho
             #This checks for ingredients that are missing from available ingredients
             for i in range(1, 21):
                 ing = meal_detail.get(f"strIngredient{i}")
-                if ing and ing.strip() and ing.lower() not in [x.strip().lower for x in available_ingredients]:
+                if ing and ing.strip() and ing.lower() not in [x.strip().lower() for x in available_ingredients]:
                     grocery_list.add(ing.strip())
         plan[f"Day {day}"] = meal_names
     
