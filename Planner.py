@@ -14,10 +14,10 @@ import random
 
 #Rough base price per food item (USD)
 Base_Price = {
-    "spice": 5.0,
+    "spice": 3.0,
     "veg": 7.0,
     "protein": 15.0,
-    "other": 10.0
+    "other": 5.0
 }
 
 #Store price multipliers
@@ -45,18 +45,29 @@ def normalize_ingredients(name: str):
 
     Examples:
      normalize_ingredients("Chopped Tomatoes")
-    'tomatoes'
+    'tomato'
     """
 
     words = name.lower().split()
-    return " ".join(word for word in words if word not in Modifiers)
+    core = " ".join(word for word in words if word not in Modifiers)
+    #This should treat plurals like singulars. Checks for varying spellings
+    if core.endswith(("oes", "xes", "ses", "zes", "ches", "shes")):
+        core = core[:-2]            # removes 'es'
+    elif core.endswith("ies"):
+        core = core[:-3] + "y"      # berries  will now be berry
+    elif core.endswith("ves"):
+        core = core[:-3] + "f"      #leaves will not be leaf
+    elif core.endswith("s") and not core.endswith("ss"):
+        core = core[:-1]
+    
+    return core
 
 #Classifying the ingredients
 def classify_ingredients(item:str):
     """
     Categorizing items based on simple keywords
     """
-
+    
     name = item.lower()
     if any(k in name for k in Spice_Keywords):
         return "spice"
@@ -86,6 +97,7 @@ def estimate_cost(missing_items:list, store:str):
     store_key = store.lower().strip()
     multiplier = Store_Mult.get(store_key, Store_Mult["default"]) #Default mid-range
 
+    #Calculating the cost
     subtotal = 0.0
     for item in missing_items:
         food_type = classify_ingredients(item)
@@ -93,8 +105,8 @@ def estimate_cost(missing_items:list, store:str):
     return subtotal * multiplier
 
 
-#function to generate a grocery list
-def meal_planner(category, available_ingredients, meals_per_day, days, store_choice, budget=None):
+#function to generate a grocery list. Making walmart the default if no argument passes
+def meal_planner(category, available_ingredients, meals_per_day, days, store_choice='walmart', budget=None):
     """
     Creates a multi-day meal plan and grocery list.
 
@@ -119,7 +131,8 @@ def meal_planner(category, available_ingredients, meals_per_day, days, store_cho
         grocery_list : sorted, unique list of ingredients to buy
         total_cost : estimated cost in USD
     """
-
+    
+    #Calling the search_meals function
     meals = search_meals_cat(category)
     if not meals:
         raise Exception("No meals found for this category.")
@@ -128,7 +141,7 @@ def meal_planner(category, available_ingredients, meals_per_day, days, store_cho
     grocery_list = set()
     total_cost = 0.0
 
-    # normalise the pantry once for fast look-ups
+    # Normalise the pantry once for fast look-ups
     owned = {normalize_ingredients(item) for item in available_ingredients}
     #Using a for loop to loop through the days and meals
     for day in range(1, days +1):
@@ -153,7 +166,7 @@ def meal_planner(category, available_ingredients, meals_per_day, days, store_cho
                 #Makes sure that the user doesn't have the ingredients
                 norm_ing = normalize_ingredients(ing)
                 if norm_ing not in owned:
-                    grocery_list.add(ing.strip())
+                    grocery_list.add(norm_ing)
         plan[f"Day {day}"] = meal_names
     
     #Estimating the cost with the new system

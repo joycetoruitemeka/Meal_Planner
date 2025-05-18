@@ -43,8 +43,8 @@ class TestMealPlanner(unittest.TestCase):
         """
         Confirms that descriptive modifiers are stripped and case is normalised.
         """
-        self.assertEqual(normalize_ingredients("Chopped Tomatoes"), "tomatoes")
-        self.assertEqual(normalize_ingredients("FRESH Basil Leaves"), "basil leaves")
+        self.assertEqual(normalize_ingredients("Chopped Tomatoes"), "tomato")
+        self.assertEqual(normalize_ingredients("FRESH Basil Leaves"), "basil leaf")
 
 
     def test_classify_ingredients(self):

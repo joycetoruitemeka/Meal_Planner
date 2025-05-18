@@ -22,7 +22,7 @@ def main():
 
         meals_per_day = int(input("Enter number of meals per day: "))
         days = int(input("Enter number of days to plan for: "))
-        store_choice = input("Enter the store: ")
+        store_choice = input("Enter the store (walmart, trader joe's, costco, aldi, and whole foods), if other type 'default': ")
         budget = input("Enter budget in dollars (or leave blank): ").strip()
         budget = float(budget) if budget else None
 
