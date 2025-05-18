@@ -8,6 +8,7 @@ and estimates cost with a two-step model:
 2. Multiplier by store tier (Walmart, Trader Joe’s, Whole Foods, Aldi, Costco)
 """
 
+#Importing the needed modules
 from Meals_API import search_meals_cat, meal_details
 import random
 
@@ -22,11 +23,11 @@ Base_Price = {
 #Store price multipliers
 Store_Mult = {
     "walmart": 3.0,
-    "trader joe's": 1.5,
+    "trader joe's": 1.0,
     "whole foods": 2.0,
-    "aldi": 2.0,
+    "aldi": 1.6,
     "costco": 2.5,
-    "other": 3.0
+    "default": 1.5
 }
 
 #Keywords to label ingredients
@@ -35,10 +36,10 @@ Protein_Keywords = {"chicken", "beef", "pork", "tofu", "salmon", "fish", "egg", 
 Veg_Keywords = {"lettuce", "tomato", "onion", "broccoli", "carrot", "pepper", "spinach", "zucchini", "potato"}
 
 #Modifiers
-Modifiers = {"chopped", "minced", "fresh", "raw", "sliced", "diced", "cubed", "whole", "ground", "grated"}
+Modifiers = {"chopped", "minced", "fresh", "raw", "sliced", "diced", "cubed", "whole", "ground", "grated", "clove"}
 
 #Normalize the ingredients
-def normalize_ingredients(name: str) -> str:
+def normalize_ingredients(name: str):
     """
     Lower-case a raw ingredient string and remove descriptive modifiers.
 
@@ -51,7 +52,7 @@ def normalize_ingredients(name: str) -> str:
     return " ".join(word for word in words if word not in Modifiers)
 
 #Classifying the ingredients
-def classify_ingredients(item:str) -> str:
+def classify_ingredients(item:str):
     """
     Categorizing items based on simple keywords
     """
@@ -67,7 +68,7 @@ def classify_ingredients(item:str) -> str:
 
 
 #Estimate cost
-def estimate_cost(missing_items:list, store:str) -> float:
+def estimate_cost(missing_items:list, store:str):
     """
     Estimates grocery cost for missing_items at store.
 
@@ -83,7 +84,7 @@ def estimate_cost(missing_items:list, store:str) -> float:
     """
     
     store_key = store.lower().strip()
-    multiplier = Store_Mult.get(store_key, 1.5) #Default mid-range
+    multiplier = Store_Mult.get(store_key, Store_Mult["default"]) #Default mid-range
 
     subtotal = 0.0
     for item in missing_items:
@@ -93,7 +94,7 @@ def estimate_cost(missing_items:list, store:str) -> float:
 
 
 #function to generate a grocery list
-def meal_planner(category, available_ingredients, meals_per_day, days, store_choice="walmart", budget=None):
+def meal_planner(category, available_ingredients, meals_per_day, days, store_choice, budget=None):
     """
     Creates a multi-day meal plan and grocery list.
 
@@ -127,6 +128,9 @@ def meal_planner(category, available_ingredients, meals_per_day, days, store_cho
     grocery_list = set()
     total_cost = 0.0
 
+    # normalise the pantry once for fast look-ups
+    owned = {normalize_ingredients(item) for item in available_ingredients}
+    #Using a for loop to loop through the days and meals
     for day in range(1, days +1):
         daily_meals = random.sample(meals, meals_per_day)
         meal_names = []
@@ -140,9 +144,15 @@ def meal_planner(category, available_ingredients, meals_per_day, days, store_cho
             meal_names.append(meal_name)
 
             #This checks for ingredients that are missing from available ingredients
+            #Loops through 20 possible ingredients
             for i in range(1, 21):
                 ing = meal_detail.get(f"strIngredient{i}")
-                if ing and ing.strip() and ing.lower() not in [x.strip().lower() for x in available_ingredients]:
+                if not ing or not ing.strip():
+                    continue
+                
+                #Makes sure that the user doesn't have the ingredients
+                norm_ing = normalize_ingredients(ing)
+                if norm_ing not in owned:
                     grocery_list.add(ing.strip())
         plan[f"Day {day}"] = meal_names
     

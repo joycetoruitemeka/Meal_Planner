@@ -1,57 +1,8 @@
-Allspice
-Bay Leaf
-Butter
-Cabbage
-Capers
-Carrots
-Chilli
-Chinese Broccoli
-Dill
-Double Cream
-Egg
-Eggs
-Feta
-Floury Potatoes
-Garlic Clove
-Ginger
-Gruyère
-Jerusalem Artichokes
-Leek
-Lemon
-Lime
-Malt Vinegar
-Noodles
-Nutmeg
-Oil
-Olive Oil
-Paprika
-Parsley
-Peanuts
-Plain Flour
-Plain flour
-Potatoes
-Prawns
-Red Chilli
-Red Onions
-Red Pepper
-Red Snapper
-Red Wine Vinegar
-Rosemary
-Sardines
-Scotch Bonnet
-Semi-skimmed Milk
-Soy Sauce
-Spinach
-Spring Onions
-Sugar
-Sunflower Oil
-Tamarind Paste
-Thyme
-Tofu
-Tuna
-Vegetable Oil
-Water
-White Fish Fillets
-White Wine Vinegar
-Worcestershire Sauce
-Yellow Pepper
+Self-raising Flour
+almond milk
+baking powder
+cacao
+coco sugar
+flax eggs
+vanilla
+water

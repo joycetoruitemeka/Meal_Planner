@@ -5,6 +5,7 @@ Command-line entry point for the Meal-Planner application.
 Handles all user interaction.
 """
 
+#Importing the needed modules
 from Planner import meal_planner
 from Storage import save_to_file
 
@@ -14,7 +15,8 @@ def main():
     Runs an interactive session
     """
     try:
-        dietary_pref = input("Enter your dietary preference (e.g., Vegetarian, Seafood, Vegan.): ").strip()
+        #Making the input calls
+        dietary_pref = input("Enter your dietary preference (e.g., Vegetarian, Seafood, and/or Vegan.): ").strip()
         available_ingredients = input("Enter available ingredients (comma-spearated): ").lower().split(',')
         available_ingredients = [i.strip() for i in available_ingredients]
 
@@ -26,6 +28,7 @@ def main():
 
         meal_plan, grocery_list, total_cost = meal_planner(dietary_pref, available_ingredients, meals_per_day, days, store_choice, budget)
 
+        #Saves to a file
         save_to_file("meal_plan.txt", meal_plan)
         save_to_file("grocery_list.txt", grocery_list)
 

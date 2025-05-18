@@ -26,6 +26,7 @@ def search_meals(ingredient):
     try:
         response = requests.get(f"{Base_URL}filter.php?i={ingredient}")
         response.raise_for_status()
+        #Parses the JSON into a python dict
         data = response.json()
         return data["meals"] if data ["meals"] else []
     except Exception as e:
