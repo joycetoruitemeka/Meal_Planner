@@ -1,4 +1,5 @@
 🥗 Meal Planner App
+
 A command-line application that helps users plan meals based on dietary preferences, ingredients they already have, and budget constraints. It connects to TheMealDB API to fetch real recipes, generates a grocery list, and estimates costs based on different store types.
 
 📌 Features
